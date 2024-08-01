@@ -10,7 +10,7 @@ const methodOverride = require('method-override')
 const Car = require('./models/cars')
 
 app.use(express.json()) // we are able to parse the body and accept json data from requestors
-// app.use(express.urlencoded({ extended: true }))
+app.use(express.urlencoded({ extended: true }))
 app.use(logger('tiny'))
 app.use(methodOverride('_method'))
 
@@ -36,7 +36,9 @@ app.post('/cars', async (req, res) => {
     req.body.isRunning === 'on' || req.body.isRead === true? 
     req.body.isRunning = true :
     req.body.isRunning = false
-    try {
+    req.body.year = parseInt (req.body.year)
+    console.log(typeof req.body.year)
+        try {
         const createdCar = await Car.create(req.body)
         res.redirect(`/cars/${createdCar._id}`)
    } catch (error) {
@@ -65,7 +67,7 @@ app.get('/cars', async (req, res) => {
 
 app.get('/cars/:id', async (req, res) => {
     try {
-        const foundCars = await Note.findOne({ _id: req.params.id })
+        const foundCar = await Car.findOne({ _id: req.params.id })
         res.render('show.ejs', {
             car: foundCar
         })
@@ -74,13 +76,33 @@ app.get('/cars/:id', async (req, res) => {
     }
 })
 
+app.get('/cars/:id/edit', async (req, res) => {
+    try {
+        const editCar = await Car.findOne({ _id: req.params.id })
+        res.render('edit.ejs', {
+            car: editCar
+    })   
+    }   catch (error) {
+        res.status(400).json({ msg: error.message })
+    }
+})
 // Update
 
+app.get('/cars/:id/edit', async (req, res) => {
+    try{
+        const foundCar = await Car.findOne({ _id: req.params.id }, req.body, { new: true})
+        res.render('edit.ejs', {
+            car: foundCar
+        })
+    } catch(error){
+        res.status(400).json({ msg: error.message })
+    }
+});
 app.put('/cars/:id', async (req, res) => {
     try {
-        const updatedCar = await Note.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true })
-        res.json(updatedCar)
-    }   catch (error) {
+        const updatedCar = await Car.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true })
+        res.redirect(`/cars/${updatedCar._id}`)
+    } catch (error) {
         res.status(400).json({ msg: error.message })
     }
 })

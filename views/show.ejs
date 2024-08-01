@@ -6,18 +6,18 @@
   <title><%= car.model %></title>
 </head>
 <body>
-  <h1><%= car.model %></h1>
+  <h1><%= car.year %> <%= car.make %> <%= car.model %></h1>
   <% if(car.isRunning){ %>
-    <p>You have read this note..</p>
+    <p>This car runs</p>
   <% } else { %>
-    <p>You have not read this note.. </p>
+    <p>This car needs work </p>
   <% } %>
-  <form action="/notes/<%=car._id%>?_method=DELETE" method="POST">
+  <form action="/cars/<%=car._id%>?_method=DELETE" method="POST">
     <button type="submit">
       Delete <%= car._id %>
     </button>
   </form>
-  <a href="/notes/<%= car._id %>/edit">Edit <%= car._id %></a>
-  <a href="/notes">Back to Cars</a>
+  <a href="/cars/<%= car._id %>/edit">Edit <%= car._id %></a>
+  <a href="/cars">Back to Cars</a>
 </body>
 </html>
